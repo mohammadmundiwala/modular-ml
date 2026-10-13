@@ -326,8 +326,9 @@ class RandomSplitter(BaseSplitter):
             row_vals = tuple(to_hashable(group_data[k][i]) for k in group_data)
             buckets.setdefault(row_vals, []).append(i)
 
-        # Split groups on ratios
+        # Shuffle group order with the seeded generator, then split groups on ratios
         group_keys = list(buckets.keys())
+        group_keys = [group_keys[i] for i in self.rng.permutation(len(group_keys))]
         boundaries = self._compute_split_boundaries(len(group_keys))
         split_indices: dict[str, list[int]] = {}
         for split_lbl, (start, end) in boundaries.items():
